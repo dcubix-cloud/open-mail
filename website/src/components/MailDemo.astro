@@ -1,0 +1,224 @@
+---
+// The app's inbox and compose window in plain HTML, with the app's class names and styles (demo.css).
+// It is laid out at a real screen size (1440×860, or the app's phone layout at 390 wide) and scaled
+// down to fit the window, so it keeps the app's proportions instead of filling the window at 1:1.
+// scripts/demo.ts types a message into it, sends it, and lands a reply. Without scripts, or with
+// reduced motion, it shows the finished message.
+
+type Row = {
+  name: string;
+  email: string;
+  hue: number; // as the app's hue(email) gives it, so avatars match the real UI
+  date: string; // shown without scripts; demo.ts recomputes it from ago
+  ago: number; // minutes before now
+  subject: string;
+  snippet: string;
+  unread?: boolean;
+  count?: number;
+  clip?: boolean;
+};
+
+const rows: Row[] = [
+  { name: "Sam Patel", email: "sam@example.net", hue: 336, date: "21:10", ago: 34, subject: "Lunch on Friday?", snippet: "Hey! Are you free for lunch on Friday? The new ramen place opened near the office.", unread: true },
+  { name: "Alicia Chen", email: "alicia@example.org", hue: 237, date: "20:00", ago: 95, subject: "Re: Feedback on the onboarding flow", snippet: "+1 from me. I have a few screenshots of the DNS step.", unread: true, count: 2, clip: true },
+  { name: "Northwind Weekly", email: "news@northwind.example", hue: 252, date: "October 23", ago: 2 * 1440 + 200, subject: "Your weekend reading list", snippet: "Five long reads for the weekend, and a soup recipe worth the effort." },
+  { name: "Accounts Team", email: "billing@vendor.example", hue: 329, date: "October 21", ago: 4 * 1440 + 500, subject: "Invoice INV-2026-0142", snippet: "Hi Sana, please find invoice INV-2026-0142 attached. Total due: 420.00 USD.", clip: true },
+];
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p[0])
+    .join("")
+    .toUpperCase();
+
+const folders = [
+  { icon: "inbox", label: "Inbox", active: true },
+  { icon: "star", label: "Starred" },
+  { icon: "send", label: "Sent" },
+  { icon: "file-text", label: "Drafts" },
+  { icon: "archive", label: "Archive" },
+  { icon: "trash-2", label: "Bin" },
+];
+// One of the app's Appearance backgrounds, copied from frontend/public/backgrounds into public/backgrounds.
+const background = "waves";
+
+const tools = ["bold", "italic", "underline", "strikethrough", "list", "list-ordered", "quote", "link-2"];
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<div class="mb-frame">
+  <div class="mb-view">
+  <div class="mb-fit">
+  <div class="mb has-bg" data-demo role="img" aria-label="Open Mail: writing a message to the team, sending it, and a reply arriving">
+    <img class="mb-bg" src={`${base}/backgrounds/${background}.svg`} alt="" aria-hidden="true" />
+    <div class="app" aria-hidden="true">
+      <nav class="rail">
+        <span class="rail-compose" data-el="compose-btn"><svg class="icon i20"><use href="#i-square-pen"></use></svg></span>
+        <div class="rail-group rail-boxes">
+          <span class="rail-item rail-box current"><span class="avatar s28 h-30">S</span><span class="rail-box-name">Sana</span></span>
+          <span class="rail-item rail-box"><span class="avatar s28 sq h-228">S</span><span class="rail-box-name">Support</span><span class="rail-dot"></span></span>
+        </div>
+        <div class="rail-group">
+          {
+            folders.map((f) => (
+              <span class={`rail-item ${f.active ? "active" : ""}`}>
+                <svg class="icon i20 thin">
+                  <use href={`#i-${f.icon}`} />
+                </svg>
+                {f.active && <span class="rail-dot" />}
+              </span>
+            ))
+          }
+        </div>
+        <div class="rail-group bottom">
+          <span class="rail-item"><svg class="icon i20 thin"><use href="#i-settings"></use></svg></span>
+          <span class="rail-item"><svg class="icon i20 thin"><use href="#i-moon"></use></svg></span>
+          <span class="rail-item"><svg class="icon i20 thin"><use href="#i-log-out"></use></svg></span>
+          <span class="rail-user"><span class="avatar s32 h-30">S</span></span>
+        </div>
+      </nav>
+
+      <div class="main">
+        <header class="topbar">
+          <div class="topbar-row">
+            <div class="title">
+              <svg class="icon i20 thin"><use href="#i-inbox"></use></svg>
+              <span class="h">Inbox</span>
+              <span class="sep">•</span>
+              <span class="muted" data-el="total">4 emails</span>
+            </div>
+            <div class="search">
+              <svg class="icon i16"><use href="#i-search"></use></svg>
+              <span>Search mail</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="panes">
+          <section class="list-card">
+            <div class="list-head">
+              <span class="check"></span>
+              <span class="icon-btn sm"><svg class="icon i16"><use href="#i-refresh-cw"></use></svg></span>
+              <span class="list-title">Inbox</span>
+              <span class="icon-btn"><svg class="icon i18"><use href="#i-list-filter"></use></svg></span>
+            </div>
+            <div class="list-scroll">
+              <div class="incoming" data-el="reply">
+                <div class="incoming-in">
+                <div class="row-item unread">
+                  <span class="avatar s40 h-65">MR</span>
+                  <div class="row-main">
+                    <div class="row-top">
+                      <span class="row-name">Maya Rao<span class="row-count">2</span></span>
+                      <span class="row-date" data-el="now">21:14</span>
+                    </div>
+                    <div class="row-sub"><span class="row-email">maya@yourcompany.com</span></div>
+                    <p class="row-preview"><span class="row-subject">Re: We moved our mail</span> — Works. Replying from my phone.</p>
+                  </div>
+                  <span class="unread-dot"></span>
+                </div>
+                </div>
+              </div>
+              {
+                rows.map((r) => (
+                  <div class={`row-item ${r.unread ? "unread" : ""}`}>
+                    <span class={`avatar s40 h-${r.hue}`}>{initials(r.name)}</span>
+                    <div class="row-main">
+                      <div class="row-top">
+                        <span class="row-name">
+                          {r.name}
+                          {r.count && <span class="row-count">{r.count}</span>}
+                        </span>
+                        <span class="row-date" data-ago={r.ago}>
+                          {r.date}
+                        </span>
+                      </div>
+                      <div class="row-sub">
+                        <span class="row-email">{r.email}</span>
+                        {r.clip && (
+                          <span class="row-icons">
+                            <svg class="icon i14">
+                              <use href="#i-paperclip" />
+                            </svg>
+                          </span>
+                        )}
+                      </div>
+                      <p class="row-preview">
+                        <span class="row-subject">{r.subject}</span> — {r.snippet}
+                      </p>
+                    </div>
+                    {r.unread && <span class="unread-dot" />}
+                  </div>
+                ))
+              }
+            </div>
+          </section>
+          <section class="reader-card reader-empty"><svg class="icon i36 hair"><use href="#i-mail"></use></svg></section>
+        </div>
+      </div>
+
+      <span class="compose-fab" data-el="compose-fab"><svg class="icon i18"><use href="#i-square-pen"></use></svg>Compose</span>
+
+      <div class="compose" data-el="compose">
+        <header class="compose-head">
+          <span class="compose-title" data-el="title">We moved our mail</span>
+          <span class="icon-btn sm"><svg class="icon i16"><use href="#i-minus"></use></svg></span>
+          <span class="icon-btn sm hide-narrow"><svg class="icon i15"><use href="#i-maximize-2"></use></svg></span>
+          <span class="icon-btn sm"><svg class="icon i16"><use href="#i-x"></use></svg></span>
+        </header>
+        <div class="compose-body">
+          <div class="addr-field">
+            <span class="addr-label">From</span>
+            <span class="from">Sana &lt;sana@yourcompany.com&gt;</span>
+            <span class="from-caret">▼</span>
+          </div>
+          <div class="addr-field">
+            <span class="addr-label">To</span>
+            <div class="chips" data-el="to">
+              <span class="addr-chip">team@yourcompany.com<span class="chip-x"><svg class="icon i12"><use href="#i-x"></use></svg></span></span>
+            </div>
+            <span class="cc-toggles"><span class="link-btn">Cc</span><span class="link-btn">Bcc</span></span>
+          </div>
+          <div class="subject-input" data-el="subject" data-placeholder="Subject">We moved our mail</div>
+          <div class="editor">
+            <div class="editor-toolbar">
+              {
+                tools.map((t) => (
+                  <span class="icon-btn sm" data-tool={t}>
+                    <svg class="icon i16">
+                      <use href={`#i-${t}`} />
+                    </svg>
+                  </span>
+                ))
+              }
+            </div>
+            <div class="editor-content" data-el="body">
+              <p>Hi all,</p>
+              <p>Our mail now runs on our own server. <strong>Reply here</strong> to try it.</p>
+            </div>
+          </div>
+        </div>
+        <footer class="compose-foot">
+          <span class="btn btn-primary" data-el="send"><svg class="icon i16"><use href="#i-send-horizontal"></use></svg>Send</span>
+          <span class="icon-btn"><svg class="icon i18"><use href="#i-paperclip"></use></svg></span>
+          <span class="grow compose-status" data-el="status">Saved</span>
+          <span class="icon-btn"><svg class="icon i18"><use href="#i-trash-2"></use></svg></span>
+        </footer>
+      </div>
+
+      <div class="toasts"><div class="toast" data-el="toast">Sent</div></div>
+    </div>
+
+    <svg class="cursor" data-el="cursor" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 3.2v15.6l4.2-4 2.7 6.1 2.6-1.1-2.7-6h5.9z"></path>
+    </svg>
+  </div>
+  </div>
+  </div>
+</div>
+
+<script>
+  import "../scripts/demo.ts";
+</script>

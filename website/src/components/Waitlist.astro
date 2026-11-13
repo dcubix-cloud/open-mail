@@ -1,0 +1,17 @@
+---
+// The waitlist form. scripts/waitlist.ts sends it; "hero" sits in the line-art hero, "dark" in the closing panel.
+interface Props {
+  tone: "hero" | "dark";
+}
+const { tone } = Astro.props;
+---
+
+<div class={`join join-${tone}`}>
+  <form class="join-form" data-waitlist>
+    <input name="email" type="email" required maxlength="254" autocomplete="email" placeholder="you@company.com" aria-label="Email" />
+    <input class="join-hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <button class="join-btn" type="submit">Join waitlist</button>
+  </form>
+  <p class="join-done" hidden><svg class="icon sm"><use href="#i-check"></use></svg>You're on the list.</p>
+  <p class="join-error small" role="status" aria-live="polite"></p>
+</div>

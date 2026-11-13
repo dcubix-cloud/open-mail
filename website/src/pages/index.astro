@@ -1,0 +1,157 @@
+---
+import { Image } from "astro:assets";
+
+import compose from "../assets/shots/compose.png";
+import inboxPhone from "../assets/shots/inbox-phone.png";
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import Logo from "../components/Logo.astro";
+import Nav from "../components/Nav.astro";
+import Stories from "../components/Stories.astro";
+import Waitlist from "../components/Waitlist.astro";
+---
+
+<Base title="Open Mail — open-source webmail for your domain" description="The open-source alternative to Outlook, Gmail and GoDaddy email, self-hosted on your own server. MIT licensed.">
+  <Nav />
+  <main id="top">
+    <Hero />
+      <section class="section wrap" id="self-host">
+        <div class="section-head">
+          <h2>Up in three commands.</h2>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <span class="grow">Docker Compose</span>
+            <span class="pill">On release</span>
+          </div>
+          <pre id="commands"><code><span class="prompt">$ </span>git clone &lt;repo&gt; mailbox &amp;&amp; cd mailbox
+<span class="prompt">$ </span>cp .env.example .env  <span class="comment"># RESEND_API_KEY, ACTIVATION_KEY, PUBLIC_URL</span>
+<span class="prompt">$ </span>docker compose up -d</code></pre>
+        </div>
+        <p class="note muted small">Needs a Resend account with a full-access API key.</p>
+      </section>
+
+    <Stories />
+
+      <section class="section wrap" id="how">
+        <div class="section-head">
+          <h2>Resend delivers. You keep the mail.</h2>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <span class="step-dot">1</span>
+            <h3>Resend receives</h3>
+            <p>Your domain's MX points to Resend.</p>
+          </div>
+          <div class="step">
+            <span class="step-dot">2</span>
+            <h3>Open Mail stores</h3>
+            <p>Mail and files land on your volume.</p>
+          </div>
+          <div class="step">
+            <span class="step-dot">3</span>
+            <h3>Your team reads</h3>
+            <p>In any browser, on any device.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section wrap" id="features">
+        <div class="section-head">
+          <h2>Everything you expect from mail.</h2>
+        </div>
+        <div class="features">
+          <article class="card">
+            <div class="vignette" aria-hidden="true">
+              <div class="v-images">
+                <svg class="icon sm"><use href="#i-image" /></svg>
+                Images hidden
+                <span class="link">Show images</span>
+              </div>
+              <div class="v-blocked"><i></i><i></i><i></i></div>
+            </div>
+            <h3>Private by default</h3>
+            <p>Trackers stay blocked until you choose.</p>
+          </article>
+
+          <article class="card">
+            <div class="vignette v-thread" aria-hidden="true">
+              <div class="v-msg"><span class="avatar av-pink">RO</span><strong>Rico</strong><span>Could you take a look?</span><time>18:36</time></div>
+              <div class="v-msg"><span class="avatar av-indigo">AC</span><strong>Alicia</strong><span>+1 from me.</span><time>20:01</time></div>
+              <div class="v-msg"><span class="avatar av-green">SK</span><strong>You</strong><span>On it.</span><time>20:14</time></div>
+            </div>
+            <h3>Conversations</h3>
+            <p>Replies land in one thread.</p>
+          </article>
+
+          <article class="card">
+            <div class="vignette" aria-hidden="true">
+              <div class="v-preview"></div>
+              <div class="v-attachments">
+                <span class="v-file"><svg class="icon sm"><use href="#i-file" /></svg>invoice.pdf <small>84 KB</small></span>
+                <span class="v-file"><svg class="icon sm"><use href="#i-image" /></svg>dns.png <small>120 KB</small></span>
+              </div>
+            </div>
+            <h3>Attachments</h3>
+            <p>Preview images and PDFs in place.</p>
+          </article>
+
+          <article class="card">
+            <div class="vignette" aria-hidden="true">
+              <div class="v-switch">
+                <span class="on"><svg class="icon sm"><use href="#i-sun" /></svg>Light</span>
+                <span><svg class="icon sm"><use href="#i-moon" /></svg>Dark</span>
+              </div>
+              <div class="v-devices">
+                <svg class="icon sm"><use href="#i-monitor" /></svg>
+                <svg class="icon sm"><use href="#i-phone" /></svg>
+                <span class="pill"><svg class="icon sm"><use href="#i-download" /></svg>Install app</span>
+              </div>
+            </div>
+            <h3>Everywhere</h3>
+            <p>Desktop or phone, light or dark.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section wrap">
+        <div class="section-head">
+          <h2>Write like you always have.</h2>
+          <p>Rich text, attachments and drafts that save themselves.</p>
+        </div>
+        <div class="showcase">
+          <div class="window">
+            <div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span class="window-url">mail.yourcompany.com</span></div>
+            <Image src={compose} widths={[1000, 1440, 2000, 2880]} sizes="(max-width: 1120px) calc(100vw - 32px), 1000px" alt="Writing a new message with recipients, formatting and an attachment" />
+          </div>
+          <div class="phone">
+            <Image src={inboxPhone} widths={[240, 480, 780]} sizes="(max-width: 720px) 280px, 240px" alt="Open Mail inbox on a phone" />
+          </div>
+        </div>
+      </section>
+
+
+      <section class="wrap">
+        <div class="cta">
+          <h2>Own your inbox.</h2>
+          <p>Your domain, your server, your mail.</p>
+          <div class="actions">
+            <Waitlist tone="dark" />
+          </div>
+        </div>
+      </section>
+  </main>
+
+    <footer class="wrap footer">
+      <a class="brand" href="#top">
+        <Logo size={24} />
+        Open Mail
+      </a>
+      <span>MIT License</span>
+    </footer>
+</Base>
+
+<script>
+  import "../scripts/site.ts";
+  import "../scripts/waitlist.ts";
+</script>

@@ -1,0 +1,280 @@
+---
+// The Features heading beside the mailbox the paper plane leaves from, then three features, each a slice of the app that plays as it scrolls into view (scripts/stories.ts):
+// adding aliases in Settings, answering from a shared mailbox, and searching. The markup is each
+// story's last frame, which is what shows without scripts or with reduced motion.
+import PostBox from "./PostBox.astro";
+import MailRow from "./MailRow.astro";
+import StoryRail from "./StoryRail.astro";
+import "../styles/stories.css";
+
+const D = "yourcompany.com";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const searchRows = [
+  { name: "Sam Patel", email: "sam@example.net", hue: 336, initials: "SP", date: "09:12", ago: 40, subject: "Lunch on Friday?", snippet: "The new ramen place opened near the office.", unread: true },
+  { name: "Accounts Team", email: "billing@vendor.example", hue: 329, initials: "AT", date: "November 11", ago: 2 * 1440 + 300, subject: "Invoice INV-2026-0142", snippet: "Please find the invoice attached. Total due: 420.00 USD.", clip: true, match: true },
+  { name: "Alicia Chen", email: "alicia@example.org", hue: 237, initials: "AC", date: "November 10", ago: 3 * 1440 + 200, subject: "Re: Feedback on the onboarding flow", snippet: "A few screenshots of the DNS step.", clip: true },
+  { name: "Rico Oliveira", email: `rico@${D}`, hue: 15, initials: "RO", date: "November 8", ago: 5 * 1440 + 100, subject: "Q4 budget", snippet: "I've added the invoice totals to the sheet.", },
+  { name: "Hosting Co", email: "billing@hostingco.example", hue: 100, initials: "HC", date: "November 1", ago: 12 * 1440, subject: "Your October invoice", snippet: "Your invoice for October is attached.", clip: true, match: true },
+  { name: "Northwind Weekly", email: "news@northwind.example", hue: 252, initials: "NW", date: "October 30", ago: 14 * 1440, subject: "Your weekend reading list", snippet: "Five long reads for the weekend." },
+];
+---
+
+<section class="stories wrap" id="stories">
+  <svg class="art flight" aria-hidden="true">
+    <defs>
+      <mask id="trail-mask" maskUnits="userSpaceOnUse" x="-200" y="-200" width="4000" height="20000">
+        <path class="trail-reveal" fill="none" stroke="#fff" stroke-width="10" />
+      </mask>
+    </defs>
+    <path class="trail ln none dash" mask="url(#trail-mask)" />
+    <g class="plane">
+      <path class="paper ln" d="M0 14L52 0L16 22Z" />
+      <path class="paper-dk ln" d="M16 22L52 0L22 34Z" />
+      <path class="ln thin none" d="M16 22l3 6" />
+    </g>
+  </svg>
+  <div class="stories-head">
+    <PostBox />
+    <h2>Features</h2>
+  </div>
+  <article class="story">
+    <div class="story-copy">
+      <div class="story-text">
+      <h2>An address for everyone.</h2>
+      <p>name@{D} for each person, and any aliases they need.</p>
+      </div>
+    </div>
+    <div class="mb-frame st-frame">
+      <div class="st-view">
+        <div class="st-fit">
+          <div class="mb has-bg st" data-story="addresses" role="img" aria-label="Settings, Users: adding the aliases rico.oliveira@ and maya.rao@">
+            <img class="mb-bg" src={`${base}/backgrounds/hills.svg`} alt="" aria-hidden="true" />
+            <div class="app" aria-hidden="true">
+              <StoryRail active="settings" />
+              <div class="main">
+                <header class="topbar">
+                  <div class="topbar-row">
+                    <div class="title"><svg class="icon i20 thin"><use href="#i-settings"></use></svg><span class="h">Settings</span></div>
+                    <div class="search"><svg class="icon i16"><use href="#i-search"></use></svg><span>Search mail</span></div>
+                  </div>
+                </header>
+                <div class="panes">
+                  <section class="settings-card">
+                    <nav class="settings-tabs"><span class="tab">Profile</span><span class="tab">Appearance</span><span class="tab active">Users</span><span class="tab">Domain</span></nav>
+                    <div class="settings-body">
+                      <div class="row between"><h2>Users</h2><span class="btn btn-primary"><svg class="icon i16"><use href="#i-plus"></use></svg>Add user</span></div>
+                      <div class="user-list">
+                        <div class="user-row">
+                          <span class="avatar s40 h-30">S</span>
+                          <div class="user-main">
+                            <div class="row wrap gap-sm"><strong>Sana</strong><span class="badge badge-dark">Master admin</span></div>
+                            <div class="row wrap gap-xs"><span class="pill">sana@{D}</span><span class="pill add"><svg class="icon i12"><use href="#i-plus"></use></svg>Alias</span></div>
+                          </div>
+                        </div>
+                        <div class="user-row">
+                          <span class="avatar s40 h-15">RO</span>
+                          <div class="user-main">
+                            <div class="row wrap gap-sm"><strong>Rico Oliveira</strong><span class="badge">Admin</span></div>
+                            <div class="row wrap gap-xs">
+                              <span class="pill">rico@{D}</span>
+                              <span class="pill alias" data-added>rico.oliveira@{D}<svg class="icon i12"><use href="#i-x"></use></svg></span>
+                              <span class="pill add" data-alias="rico.oliveira"><svg class="icon i12"><use href="#i-plus"></use></svg>Alias</span>
+                            </div>
+                          </div>
+                          <span class="icon-btn"><svg class="icon i18"><use href="#i-ellipsis"></use></svg></span>
+                        </div>
+                        <div class="user-row">
+                          <span class="avatar s40 h-65">MR</span>
+                          <div class="user-main">
+                            <div class="row wrap gap-sm"><strong>Maya Rao</strong></div>
+                            <div class="row wrap gap-xs">
+                              <span class="pill">maya@{D}</span>
+                              <span class="pill alias" data-added>maya.rao@{D}<svg class="icon i12"><use href="#i-x"></use></svg></span>
+                              <span class="pill add" data-alias="maya.rao"><svg class="icon i12"><use href="#i-plus"></use></svg>Alias</span>
+                            </div>
+                          </div>
+                          <span class="icon-btn"><svg class="icon i18"><use href="#i-ellipsis"></use></svg></span>
+                        </div>
+                      </div>
+                      <div class="stack">
+                        <div class="row between"><h2>Shared mailboxes</h2><span class="btn"><svg class="icon i16"><use href="#i-plus"></use></svg>New</span></div>
+                        <div class="user-list">
+                          <div class="user-row">
+                            <span class="avatar s40 sq h-228">S</span>
+                            <div class="user-main">
+                              <strong>Support</strong>
+                              <div class="row wrap gap-xs"><span class="pill">support@{D}</span><span class="pill add"><svg class="icon i12"><use href="#i-plus"></use></svg>Alias</span></div>
+                              <div class="row wrap gap-xs"><span class="pill member"><span class="avatar s18 h-30">S</span>Sana<svg class="icon i12"><use href="#i-x"></use></svg></span><span class="pill member"><span class="avatar s18 h-15">RO</span>Rico Oliveira<svg class="icon i12"><use href="#i-x"></use></svg></span><span class="pill member"><span class="avatar s18 h-65">MR</span>Maya Rao<svg class="icon i12"><use href="#i-x"></use></svg></span></div>
+                            </div>
+                            <span class="icon-btn"><svg class="icon i18"><use href="#i-ellipsis"></use></svg></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+            <svg class="cursor" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.2v15.6l4.2-4 2.7 6.1 2.6-1.1-2.7-6h5.9z"></path></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="story">
+    <div class="story-copy">
+      <div class="story-text">
+      <h2>Shared mailboxes.</h2>
+      <p>One support@ for the team. Every reply goes out under the sender's name.</p>
+      </div>
+    </div>
+    <div class="mb-frame st-frame">
+      <div class="st-view">
+        <div class="st-fit">
+          <div class="mb has-bg st" data-story="shared" role="img" aria-label="Switching to the shared Support mailbox, writing from support@ as Sana, and the team's replies in Sent">
+            <img class="mb-bg" src={`${base}/backgrounds/aurora.svg`} alt="" aria-hidden="true" />
+            <div class="app" aria-hidden="true">
+              <StoryRail box="support" active="sent" />
+              <div class="main">
+                <header class="topbar">
+                  <div class="topbar-row">
+                    <div class="title">
+                      <svg class="icon i20 thin" data-el="folder-icon"><use href="#i-send"></use></svg>
+                      <span class="title-mailbox" data-el="box-name">Support</span><span class="title-slash" data-el="box-slash">/</span>
+                      <span class="h" data-el="folder">Sent</span><span class="sep">•</span><span class="muted" data-el="total">3 emails</span>
+                    </div>
+                    <div class="search"><svg class="icon i16"><use href="#i-search"></use></svg><span>Search mail</span></div>
+                  </div>
+                </header>
+                <div class="panes">
+                  <section class="list-card">
+                    <div class="list-head">
+                      <span class="check"></span>
+                      <span class="icon-btn sm"><svg class="icon i16"><use href="#i-refresh-cw"></use></svg></span>
+                      <span class="list-title" data-el="list-title">Sent</span>
+                      <span class="icon-btn"><svg class="icon i18"><use href="#i-list-filter"></use></svg></span>
+                    </div>
+                    <div class="list-scroll" data-list="sana-inbox" hidden>
+                      <MailRow name="Sam Patel" email="sam@example.net" hue={336} initials="SP" date="09:12" ago={40} subject="Lunch on Friday?" snippet="The new ramen place opened near the office." unread />
+                      <MailRow name="Alicia Chen" email="alicia@example.org" hue={237} initials="AC" date="November 10" ago={3 * 1440 + 200} subject="Re: Feedback on the onboarding flow" snippet="A few screenshots of the DNS step." count={2} clip />
+                      <MailRow name="Northwind Weekly" email="news@northwind.example" hue={252} initials="NW" date="October 30" ago={14 * 1440} subject="Your weekend reading list" snippet="Five long reads for the weekend." />
+                    </div>
+                    <div class="list-scroll" data-list="support-inbox" hidden>
+                      <MailRow name="Lena Fischer" email="lena@example.com" hue={190} initials="LF" date="08:47" ago={65} subject="Can't sign in after the update" snippet="It says my session expired, every time." unread />
+                      <MailRow name="Tomás Ruiz" email="tomas@example.net" hue={280} initials="TR" date="November 12" ago={1440 + 120} subject="Refund for order 1042" snippet="The parcel came back to you last week." />
+                      <MailRow name="Priya Nair" email="priya@example.org" hue={160} initials="PN" date="November 11" ago={2 * 1440 + 30} subject="Invoice copy, please" snippet="Could you send the invoice for March again?" />
+                    </div>
+                    <div class="list-scroll" data-list="support-sent">
+                      <div class="incoming in" data-el="sent-new">
+                        <div class="incoming-in">
+                          <MailRow name="lena@example.com" email="by Sana" hue={190} initials="L" date="09:20" ago={0} subject="Your account is back" snippet="Hi Lena, you can sign in again. Sorry for the trouble!" />
+                        </div>
+                      </div>
+                      <MailRow name="Tomás Ruiz" email="by Rico" hue={280} initials="TR" date="November 12" ago={1440 + 60} subject="Re: Refund for order 1042" snippet="Done, the refund is on its way." />
+                      <MailRow name="Priya Nair" email="by Maya" hue={160} initials="PN" date="November 11" ago={2 * 1440} subject="Re: Invoice copy, please" snippet="Attached. Have a good week!" clip />
+                    </div>
+                  </section>
+                </div>
+              </div>
+
+              <div class="compose" data-el="compose">
+                <header class="compose-head">
+                  <span class="compose-title" data-el="title">Your account is back</span>
+                  <span class="icon-btn sm"><svg class="icon i16"><use href="#i-minus"></use></svg></span>
+                  <span class="icon-btn sm"><svg class="icon i15"><use href="#i-maximize-2"></use></svg></span>
+                  <span class="icon-btn sm"><svg class="icon i16"><use href="#i-x"></use></svg></span>
+                </header>
+                <div class="compose-body">
+                  <div class="addr-field"><span class="addr-label">From</span><span class="from">Sana &lt;support@{D}&gt;</span><span class="from-caret">▼</span></div>
+                  <div class="addr-field">
+                    <span class="addr-label">To</span>
+                    <div class="chips" data-el="to"><span class="addr-chip">lena@example.com<span class="chip-x"><svg class="icon i12"><use href="#i-x"></use></svg></span></span></div>
+                    <span class="cc-toggles"><span class="link-btn">Cc</span><span class="link-btn">Bcc</span></span>
+                  </div>
+                  <div class="subject-input" data-el="subject" data-placeholder="Subject">Your account is back</div>
+                  <div class="editor">
+                    <div class="editor-content" data-el="body"><p>Hi Lena, you can sign in again. Sorry for the trouble!</p></div>
+                  </div>
+                </div>
+                <footer class="compose-foot">
+                  <span class="btn btn-primary" data-el="send"><svg class="icon i16"><use href="#i-send-horizontal"></use></svg>Send</span>
+                  <span class="icon-btn"><svg class="icon i18"><use href="#i-paperclip"></use></svg></span>
+                  <span class="grow compose-status" data-el="status">Saved</span>
+                  <span class="icon-btn"><svg class="icon i18"><use href="#i-trash-2"></use></svg></span>
+                </footer>
+              </div>
+              <div class="toasts"><div class="toast" data-el="toast">Sent</div></div>
+            </div>
+            <svg class="cursor" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.2v15.6l4.2-4 2.7 6.1 2.6-1.1-2.7-6h5.9z"></path></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="story">
+    <div class="story-copy">
+      <div class="story-text">
+      <h2>Find any email.</h2>
+      <p>Full-text search over all your mail, with from:, has:attachment and dates.</p>
+      </div>
+    </div>
+    <div class="mb-frame st-frame">
+      <div class="st-view">
+        <div class="st-fit">
+          <div class="mb has-bg st" data-story="search" role="img" aria-label="Searching for invoice has:attachment, which leaves the two invoices with files">
+            <img class="mb-bg" src={`${base}/backgrounds/dusk.svg`} alt="" aria-hidden="true" />
+            <div class="app" aria-hidden="true">
+              <StoryRail />
+              <div class="main">
+                <header class="topbar">
+                  <div class="topbar-row">
+                    <div class="title">
+                      <svg class="icon i20 thin"><use href="#i-inbox"></use></svg>
+                      <span class="h" data-el="title">Search</span>
+                      <span class="st-count" data-el="count" hidden><span class="sep">•</span><span class="muted">6 emails</span></span>
+                    </div>
+                    <div class="search" data-el="search">
+                      <svg class="icon i16"><use href="#i-search"></use></svg>
+                      <span class="st-q" data-el="q">invoice has:attachment</span>
+                      <span class="icon-btn sm" data-el="clear"><svg class="icon i14"><use href="#i-x"></use></svg></span>
+                    </div>
+                  </div>
+                </header>
+                <div class="panes">
+                  <section class="list-card">
+                    <div class="list-head">
+                      <span class="check"></span>
+                      <span class="icon-btn sm"><svg class="icon i16"><use href="#i-refresh-cw"></use></svg></span>
+                      <span class="list-title" data-el="list-title">Results</span>
+                      <span class="icon-btn"><svg class="icon i18"><use href="#i-list-filter"></use></svg></span>
+                    </div>
+                    <div class="list-scroll">
+                      {
+                        searchRows.map(({ match, ...row }) => (
+                          <div class={`st-row ${match ? "" : "out"}`} data-match={match ? "" : undefined}>
+                            <div class="st-row-in">
+                              <MailRow {...row} />
+                            </div>
+                          </div>
+                        ))
+                      }
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+            <svg class="cursor" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.2v15.6l4.2-4 2.7 6.1 2.6-1.1-2.7-6h5.9z"></path></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+
+<script>
+  import "../scripts/stories.ts";
+  import "../scripts/flight.ts";
+</script>

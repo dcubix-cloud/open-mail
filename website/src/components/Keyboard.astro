@@ -1,0 +1,53 @@
+---
+// A line-art keyboard. scripts/demo.ts lights the keys it types; data-k names each key.
+// Hands go on top once src/assets/hands.png (or .webp) exists: line-art hands on a transparent background.
+import { Image } from "astro:assets";
+
+type Key = { k: string; label?: string; sub?: string; w?: string };
+
+const letters = (s: string): Key[] => [...s].map((c) => ({ k: c, label: c }));
+
+const rows: Key[][] = [
+  [
+    { k: "`", label: "`", sub: "~" },
+    ...[..."1234567890"].map((c, i) => ({ k: c, label: c, sub: "!@#$%^&*()"[i] })),
+    { k: "-", label: "-", sub: "_" },
+    { k: "=", label: "=", sub: "+" },
+    { k: "backspace", label: "delete", w: "w15" },
+  ],
+  [{ k: "tab", label: "tab", w: "w15" }, ...letters("qwertyuiop"), { k: "[", label: "[" }, { k: "]", label: "]" }, { k: "\\", label: "\\" }],
+  [{ k: "caps", label: "caps", w: "w175" }, ...letters("asdfghjkl"), { k: ";", label: ";" }, { k: "'", label: "'" }, { k: "enter", label: "return", w: "w225" }],
+  [{ k: "shift", label: "shift", w: "w225" }, ...letters("zxcvbnm"), { k: ",", label: "," }, { k: ".", label: "." }, { k: "/", label: "/" }, { k: "rshift", label: "shift", w: "w275" }],
+  [
+    { k: "fn", label: "fn" },
+    { k: "ctrl", label: "ctrl", w: "w125" },
+    { k: "alt", label: "alt", w: "w125" },
+    { k: " ", label: "", w: "w6" },
+    { k: "ralt", label: "alt", w: "w125" },
+    { k: "left", label: "◀" },
+    { k: "updown", label: "▲▼" },
+    { k: "right", label: "▶" },
+  ],
+];
+
+const found = import.meta.glob<{ default: ImageMetadata }>("../assets/hands.{png,webp}", { eager: true });
+const hands = Object.values(found)[0]?.default;
+---
+
+<div class="kb-wrap" aria-hidden="true">
+  <div class="kb" data-kb>
+    {
+      rows.map((row) => (
+        <div class="kb-row">
+          {row.map((key) => (
+            <span class={`key ${key.w ?? ""}`} data-k={key.k}>
+              {key.sub && <small>{key.sub}</small>}
+              {key.label}
+            </span>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+  {hands && <Image class="hands" src={hands} alt="" widths={[480, 760, 1040]} sizes="(max-width: 700px) 90vw, 520px" />}
+</div>

@@ -1,0 +1,41 @@
+---
+// One row of the app's message list (MessageList), as MailDemo.astro draws it.
+interface Props {
+  name: string;
+  email: string; // or "by Sana" on a shared mailbox's sent mail, as the app shows it
+  hue: number;
+  initials: string;
+  date: string;
+  ago?: number; // minutes before now; scripts/screens.ts turns it into a date
+  subject: string;
+  snippet: string;
+  unread?: boolean;
+  count?: number;
+  clip?: boolean;
+}
+const { name, email, hue, initials, date, ago, subject, snippet, unread, count, clip } = Astro.props;
+---
+
+<div class={`row-item ${unread ? "unread" : ""}`}>
+  <span class={`avatar s40 h-${hue}`}>{initials}</span>
+  <div class="row-main">
+    <div class="row-top">
+      <span class="row-name">{name}{count && <span class="row-count">{count}</span>}</span>
+      <span class="row-date" data-ago={ago}>{date}</span>
+    </div>
+    <div class="row-sub">
+      <span class="row-email">{email}</span>
+      {
+        clip && (
+          <span class="row-icons">
+            <svg class="icon i14">
+              <use href="#i-paperclip" />
+            </svg>
+          </span>
+        )
+      }
+    </div>
+    <p class="row-preview"><span class="row-subject">{subject}</span> — {snippet}</p>
+  </div>
+  {unread && <span class="unread-dot" />}
+</div>

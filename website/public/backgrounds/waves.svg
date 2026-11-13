@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef4ff"/>
+      <stop offset=".45" stop-color="#b9d0fb"/>
+      <stop offset="1" stop-color="#3a68d8"/>
+    </linearGradient>
+    <linearGradient id="deep" x1="0" y1="0" x2="1" y2=".4">
+      <stop offset="0" stop-color="#1546c4"/>
+      <stop offset=".5" stop-color="#3f7cf0"/>
+      <stop offset="1" stop-color="#0b2a8c"/>
+    </linearGradient>
+    <linearGradient id="mid" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6f9ff7"/>
+      <stop offset=".6" stop-color="#2a5fe0"/>
+      <stop offset="1" stop-color="#9cc0ff"/>
+    </linearGradient>
+    <linearGradient id="silk" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset=".35" stop-color="#ffffff" stop-opacity=".95"/>
+      <stop offset=".7" stop-color="#dce9ff" stop-opacity=".8"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="warm" cx=".12" cy=".18" r=".5">
+      <stop offset="0" stop-color="#ffe6c7" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#ffe6c7" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>
+    <filter id="haze" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="22"/></filter>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#sky)"/>
+  <rect width="1600" height="1000" fill="url(#warm)"/>
+  <path d="M-120 520 C 260 330 560 700 930 470 S 1450 250 1720 400 L 1720 1100 L -120 1100 Z" fill="url(#mid)" opacity=".85" filter="url(#haze)"/>
+  <path d="M-120 640 C 300 470 620 860 1040 600 S 1520 430 1720 560 L 1720 1100 L -120 1100 Z" fill="url(#deep)" filter="url(#soft)"/>
+  <path d="M-120 600 C 300 430 620 820 1040 560 S 1520 390 1720 520" fill="none" stroke="url(#silk)" stroke-width="22" filter="url(#soft)"/>
+  <path d="M-120 760 C 340 620 700 960 1120 720 S 1560 610 1720 700 L 1720 1100 L -120 1100 Z" fill="#0a2373" opacity=".85" filter="url(#soft)"/>
+  <path d="M-120 735 C 340 595 700 935 1120 695 S 1560 585 1720 675" fill="none" stroke="#9fc2ff" stroke-opacity=".7" stroke-width="12" filter="url(#soft)"/>
+</svg>

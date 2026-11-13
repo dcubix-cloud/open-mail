@@ -1,0 +1,20 @@
+---
+// The Open Mail mark: the mailbox from the hero scene, without its flag. public/icon.svg is the
+// app-icon tile.
+interface Props {
+  size?: number;
+}
+const { size = 32 } = Astro.props;
+---
+
+<svg class="logo" width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+  <g transform="translate(0 -6)">
+  <g stroke="#1d1d1f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M28.6 37L28 61H36L35.4 37Z" fill="#a9845a"/>
+    <path d="M35.6 51L44 38" fill="none"/>
+    <path d="M7 37.5V23Q7 15 15 15H51V37.5Z" fill="#e0573b"/>
+    <path d="M44 37.5V22A7 7 0 0 1 58 22V37.5Z" fill="#c4452d"/>
+  </g>
+  <rect x="49.5" y="24.5" width="3" height="4.5" rx=".6" fill="#1d1d1f"/>
+  </g>
+</svg>

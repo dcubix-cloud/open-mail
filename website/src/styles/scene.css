@@ -1,0 +1,120 @@
+/* Line-art scene around the hero (components/Scene.astro, drawn by art/scene.mjs). The feature
+   stories' lamps and paper plane use the same colours. */
+
+.hero,
+.stories {
+  --sea: #fbfaf4;
+  --ink: #1d1d1f;
+  --sand: #f3df3c;
+  --cliff: #fffef8;
+  --grass: #7cbb52;
+  --grass-dk: #4f8f34;
+  --bark: #b9a27b;
+  --leaf-a: #6aa65a;
+  --leaf-a-dk: #4f8c4a;
+  --leaf-b: #93c46f;
+  --leaf-b-dk: #74aa58;
+  --leaf-c: #4f9a7c;
+  --leaf-c-dk: #3c7f64;
+  --post: #a9845a;
+  --box: #e0573b;
+  --box-dk: #c4452d;
+  --paper: #fffef8;
+  --paper-dk: #ebe8dc;
+  --water: #5a9bd6;
+  --fish: #b3d8f3;
+  --fish-ln: #3d81c4;
+  --reed: #8a6a44;
+}
+
+.art {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.art path,
+.art circle {
+  vector-effect: non-scaling-stroke;
+}
+
+.art .ln {
+  stroke: var(--ink);
+  stroke-width: 2.2px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.art .thin {
+  stroke-width: 1.4px;
+}
+
+.art .none { fill: none; }
+.art .dash { stroke-dasharray: 5 7; stroke-width: 1.6px; }
+.art .land { fill: var(--sand); }
+.art .cliff { fill: var(--cliff); }
+.art .grass { fill: var(--grass); }
+.art .tuft { fill: none; stroke: var(--grass-dk); stroke-width: 1.6px; stroke-linejoin: round; stroke-linecap: round; }
+.art .trunk { fill: var(--bark); }
+.art .leaf-a { fill: var(--leaf-a); }
+.art .leaf-a-dk { fill: var(--leaf-a-dk); }
+.art .leaf-b { fill: var(--leaf-b); }
+.art .leaf-b-dk { fill: var(--leaf-b-dk); }
+.art .leaf-c { fill: var(--leaf-c); }
+.art .leaf-c-dk { fill: var(--leaf-c-dk); }
+.art .post { fill: var(--post); }
+.art .box { fill: var(--box); }
+.art .box-dk { fill: var(--box-dk); }
+.art .flag-arm { fill: var(--sand); }
+.art .paper { fill: var(--paper); }
+.art .paper-dk { fill: var(--paper-dk); }
+.art .reed { fill: var(--reed); }
+.art .water { fill: none; stroke: var(--water); stroke-width: 1.8px; stroke-linecap: round; }
+.art .fish { fill: var(--fish); stroke: var(--fish-ln); stroke-width: 1.5px; stroke-linejoin: round; }
+.art .eye { fill: var(--fish-ln); }
+
+/* The flag lies down until a reply lands (demo.ts sets .has-mail on the hero). */
+.art-tl .flag {
+  transform: rotate(-4deg);
+  transition: transform 0.7s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.hero.has-mail .art-tl .flag {
+  transform: rotate(90deg);
+}
+
+/* Placement: corners of the card, and either side of the window. */
+
+.art-tl { left: -12px; top: 36px; width: clamp(190px, 24vw, 400px); }
+.art-tr { right: -12px; top: 4px; width: clamp(190px, 25vw, 420px); }
+.art-bl { left: 0; bottom: 6px; width: clamp(160px, 18vw, 280px); }
+.art-br { right: 0; bottom: 10px; width: clamp(160px, 18vw, 280px); }
+
+/* These two sit in .stage beside the window, partly behind it. */
+.art-ml { right: calc(100% - 70px); top: 10%; width: clamp(170px, 20vw, 320px); }
+.art-mr { left: calc(100% - 46px); top: 48%; width: clamp(150px, 17vw, 300px); }
+
+@media (max-width: 1100px) {
+  .art-ml,
+  .art-mr {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .art-tl { left: -16px; top: 8px; width: 46vw; }
+  .art-tr { right: -16px; top: 0; width: 46vw; }
+  .art-bl,
+  .art-br {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art-tl .flag {
+    transition: none;
+  }
+}

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6fa7cf"/>
+      <stop offset=".55" stop-color="#bcdcea"/>
+      <stop offset=".75" stop-color="#e3f1f2"/>
+    </linearGradient>
+    <radialGradient id="sun" cx=".78" cy=".22" r=".35">
+      <stop offset="0" stop-color="#fffbe8" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#fffbe8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9cc58a"/>
+      <stop offset="1" stop-color="#7fae67"/>
+    </linearGradient>
+    <linearGradient id="mid" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6fae45"/>
+      <stop offset="1" stop-color="#3f7f26"/>
+    </linearGradient>
+    <linearGradient id="near" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7dbb4c"/>
+      <stop offset=".5" stop-color="#4f9030"/>
+      <stop offset="1" stop-color="#2f6a1d"/>
+    </linearGradient>
+    <filter id="haze" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="soft" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#sky)"/>
+  <rect width="1600" height="1000" fill="url(#sun)"/>
+  <ellipse cx="420" cy="230" rx="260" ry="34" fill="#ffffff" opacity=".55" filter="url(#haze)"/>
+  <ellipse cx="1180" cy="150" rx="200" ry="26" fill="#ffffff" opacity=".45" filter="url(#haze)"/>
+  <path d="M-100 640 C 200 560 420 590 640 620 S 1100 560 1300 590 S 1600 560 1700 580 L 1700 1100 L -100 1100 Z" fill="url(#far)" filter="url(#haze)"/>
+  <path d="M-100 700 C 260 600 520 640 760 700 S 1200 760 1700 640 L 1700 1100 L -100 1100 Z" fill="url(#mid)" filter="url(#soft)"/>
+  <path d="M-100 860 C 300 720 700 700 1000 760 S 1450 860 1700 780 L 1700 1100 L -100 1100 Z" fill="url(#near)"/>
+  <path d="M-100 860 C 300 720 700 700 1000 760 S 1450 860 1700 780" fill="none" stroke="#b6e07a" stroke-opacity=".5" stroke-width="5" filter="url(#soft)"/>
+</svg>

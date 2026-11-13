@@ -1,0 +1,912 @@
+/* The app's inbox and compose, scoped under .mb. Values follow frontend/src/styles.css. */
+
+/* Drawn into the scene: an ink outline and a hard shadow, like the keyboard. */
+.mb-frame {
+  padding: 6px;
+  border-radius: 20px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  box-shadow: 6px 8px 0 var(--ink);
+  container-type: inline-size;
+}
+
+/* The screen: its shape follows the layout size below; scripts/demo.ts sets --k to fit it. */
+.mb-view {
+  position: relative;
+  aspect-ratio: 1440 / 860;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.mb-fit {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1440px;
+  height: 860px;
+  transform: scale(var(--k, 0.71));
+  transform-origin: 0 0;
+  container-type: inline-size;
+}
+
+/* Tablet-wide windows: the app at 1100 wide. Phones: the app's phone layout at 390 wide. */
+@container (max-width: 900px) {
+  .mb-view {
+    aspect-ratio: 1100 / 760;
+  }
+  .mb-fit {
+    width: 1100px;
+    height: 760px;
+  }
+}
+
+@container (max-width: 560px) {
+  .mb-view {
+    aspect-ratio: 390 / 700;
+  }
+  .mb-fit {
+    width: 390px;
+    height: 700px;
+  }
+}
+
+.mb {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 var(--font);
+  text-align: left;
+  cursor: default;
+  user-select: none;
+}
+
+.mb .app {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 100%;
+}
+
+/* An Appearance background (Settings → Appearance), as the app draws it: it shows around the
+   panels and faintly through them, and where the reading pane would be. */
+.mb-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mb.has-bg {
+  --chrome: rgb(255 255 255 / 0.64);
+  --pane: rgb(255 255 255 / 0.84);
+  --field: rgb(255 255 255 / 0.7);
+  --border: rgb(15 23 42 / 0.08);
+  --border-strong: rgb(15 23 42 / 0.14);
+  --hover: rgb(15 23 42 / 0.05);
+  --active: rgb(15 23 42 / 0.07);
+  --surface-2: rgb(255 255 255 / 0.5);
+}
+
+.mb.has-bg :is(.rail, .topbar) {
+  background: var(--chrome);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+}
+
+.mb.has-bg :is(.list-card, .reader-card) {
+  background: var(--pane);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+}
+
+.mb.has-bg .reader-empty {
+  visibility: hidden;
+}
+
+.mb.has-bg .rail-item {
+  color: var(--text-2);
+}
+
+.mb.has-bg .search {
+  background: var(--field);
+}
+
+.mb .icon.i12 { width: 12px; height: 12px; }
+.mb .icon.i14 { width: 14px; height: 14px; }
+.mb .icon.i15 { width: 15px; height: 15px; }
+.mb .icon.i16 { width: 16px; height: 16px; }
+.mb .icon.i18 { width: 18px; height: 18px; }
+.mb .icon.i20 { width: 20px; height: 20px; }
+.mb .icon.i36 { width: 36px; height: 36px; }
+.mb .icon.thin { stroke-width: 1.75; }
+.mb .icon.hair { stroke-width: 1.25; }
+
+/* Avatars: hsl(hue 70% 92%) on hsl(hue 45% 32%), the hue from the address as in the app. */
+.mb .avatar {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  flex: none;
+}
+.mb .avatar.s28 { width: 28px; height: 28px; font-size: 10.6px; }
+.mb .avatar.s32 { width: 32px; height: 32px; font-size: 12.2px; }
+.mb .avatar.s40 { width: 40px; height: 40px; font-size: 15.2px; }
+.mb .avatar.sq { border-radius: 8.4px; }
+.mb .h-30 { background: hsl(30 70% 92%); color: hsl(30 45% 32%); }
+.mb .h-65 { background: hsl(65 70% 92%); color: hsl(65 45% 32%); }
+.mb .h-228 { background: hsl(228 70% 92%); color: hsl(228 45% 32%); }
+.mb .h-237 { background: hsl(237 70% 92%); color: hsl(237 45% 32%); }
+.mb .h-252 { background: hsl(252 70% 92%); color: hsl(252 45% 32%); }
+.mb .h-329 { background: hsl(329 70% 92%); color: hsl(329 45% 32%); }
+.mb .h-336 { background: hsl(336 70% 92%); color: hsl(336 45% 32%); }
+
+/* Controls */
+
+.mb .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 11px;
+  border: 1px solid var(--border-strong);
+  font-weight: 500;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: background 0.15s, scale 0.1s;
+}
+
+.mb .btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-text);
+}
+
+.mb .icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: var(--text-2);
+  flex: none;
+}
+
+.mb .icon-btn.sm {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.mb .icon-btn.active {
+  background: var(--active);
+  color: var(--text);
+}
+
+.mb .link-btn {
+  padding: 0 4px;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.mb .pressed {
+  scale: 0.94;
+}
+
+/* Rail */
+
+.mb .rail {
+  width: 72px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 0 16px;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.mb .rail-compose {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 14px;
+  border-radius: 14px;
+  background: var(--primary);
+  color: var(--primary-text);
+  box-shadow: var(--shadow);
+  transition: scale 0.1s;
+}
+
+.mb .rail-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.mb .rail-group.bottom {
+  margin-top: auto;
+}
+
+.mb .rail-boxes {
+  padding-bottom: 12px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mb .rail-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  color: var(--muted);
+}
+
+.mb .rail-item.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 0 0 1px var(--border-strong), 0 1px 3px rgb(0 0 0 / 0.06);
+}
+
+.mb .rail-item.rail-box {
+  flex-direction: column;
+  gap: 4px;
+  width: 62px;
+  height: auto;
+  min-height: 56px;
+  padding: 6px 2px;
+}
+
+.mb .rail-item.rail-box.current {
+  background: var(--active);
+  color: var(--text);
+}
+
+.mb .rail-box-name {
+  font-size: 10.5px;
+  line-height: 1.2;
+  font-weight: 500;
+}
+
+.mb .rail-box.current .rail-box-name {
+  font-weight: 650;
+}
+
+.mb .rail-dot {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px var(--surface);
+}
+
+.mb .rail-box .rail-dot {
+  top: 5px;
+  right: 14px;
+}
+
+.mb .rail-user {
+  margin-top: 6px;
+  display: flex;
+}
+
+.mb .compose-fab {
+  display: none;
+}
+
+/* Top bar */
+
+.mb .main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mb .topbar {
+  padding: 0 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.mb .topbar-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 64px;
+}
+
+.mb .title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: var(--text-2);
+}
+
+.mb .title .h {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.mb .title .sep {
+  color: var(--faint);
+}
+
+.mb .title .muted {
+  font-size: 15px;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.mb .search {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(360px, 40%);
+  height: 40px;
+  padding: 0 8px 0 14px;
+  border-radius: 12px;
+  background: var(--hover);
+  color: var(--muted);
+}
+
+/* Panes and list */
+
+.mb .panes {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 16px;
+  padding: 16px 24px 20px;
+}
+
+.mb .list-card,
+.mb .reader-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mb .list-card {
+  width: clamp(320px, 34%, 440px);
+  flex: none;
+}
+
+.mb .list-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 52px;
+  flex: none;
+  padding: 0 10px 0 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mb .check {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 4px;
+  flex: none;
+}
+
+.mb .list-title {
+  flex: 1;
+  font-weight: 500;
+  color: var(--text-2);
+}
+
+.mb .list-scroll {
+  flex: 1;
+  overflow: hidden;
+}
+
+.mb .row-item {
+  position: relative;
+  display: flex;
+  gap: 14px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mb .row-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.mb .row-top {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.mb .row-name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 500;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mb .row-item.unread .row-name {
+  font-weight: 650;
+}
+
+.mb .row-count {
+  margin-left: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.mb .row-date {
+  font-size: 12.5px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.mb .row-item.unread .row-date {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.mb .row-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 20px;
+}
+
+.mb .row-email {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mb .row-icons {
+  display: flex;
+  color: var(--faint);
+}
+
+.mb .row-preview {
+  margin: 8px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mb .row-subject {
+  color: var(--text-2);
+}
+
+.mb .row-item.unread .row-subject {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.mb .unread-dot {
+  position: absolute;
+  left: 7px;
+  top: 34px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* The reply slides in at the top of the list. */
+.mb .incoming {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.mb .incoming-in {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mb .incoming.in {
+  grid-template-rows: 1fr;
+}
+
+.mb .incoming .row-item {
+  transition: background 1.2s;
+}
+
+.mb .incoming.fresh .row-item {
+  background: var(--active);
+  transition: none;
+}
+
+.mb .reader-card {
+  flex: 1;
+  min-width: 0;
+}
+
+.mb .reader-empty {
+  display: grid;
+  place-items: center;
+  color: var(--border-strong);
+}
+
+/* Compose */
+
+.mb .compose {
+  position: absolute;
+  right: 24px;
+  bottom: 0;
+  z-index: 40;
+  width: min(600px, 100% - 32px);
+  height: min(640px, 100% - 72px);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-bottom: 0;
+  border-radius: 16px 16px 0 0;
+  box-shadow: var(--shadow-lg);
+}
+
+.mb .compose-head {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 48px;
+  flex: none;
+  padding: 0 10px 0 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mb .compose-title {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mb .compose-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mb .addr-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 46px;
+  flex: none;
+  padding: 7px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mb .addr-label {
+  width: 36px;
+  line-height: 30px;
+  color: var(--muted);
+  flex: none;
+}
+
+.mb .from {
+  flex: 1;
+  min-width: 0;
+  line-height: 30px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mb .from-caret {
+  line-height: 30px;
+  font-size: 10px;
+  color: var(--text-2);
+}
+
+.mb .chips {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  min-height: 30px;
+  white-space: pre;
+}
+
+.mb .addr-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 4px 0 10px;
+  border-radius: 999px;
+  background: var(--active);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 500;
+  animation: chip-in 0.25s ease-out;
+}
+
+.mb .chip-x {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  color: var(--muted);
+}
+
+.mb .cc-toggles {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  gap: 2px;
+}
+
+.mb .subject-input {
+  height: 46px;
+  flex: none;
+  padding: 0 18px;
+  line-height: 46px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.mb .subject-input.is-empty::before {
+  content: attr(data-placeholder);
+  color: var(--muted);
+  font-weight: 400;
+  position: absolute;
+}
+
+.mb .editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.mb .editor-toolbar {
+  display: flex;
+  gap: 2px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mb .editor-content {
+  flex: 1;
+  padding: 14px 18px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.mb .editor-content p {
+  margin: 0 0 0.6em;
+}
+
+.mb .compose-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  padding: 12px 14px 14px 18px;
+  border-top: 1px solid var(--border);
+}
+
+.mb .grow {
+  flex: 1;
+}
+
+.mb .compose-status {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+/* Toast */
+
+.mb .toasts {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  z-index: 70;
+  translate: -50% 0;
+}
+
+.mb .toast {
+  padding: 10px 18px;
+  border-radius: 12px;
+  background: var(--primary);
+  color: var(--primary-text);
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  translate: 0 10px;
+  transition: opacity 0.25s, translate 0.25s;
+}
+
+.mb .toast.show {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* Typing caret and pointer */
+
+.mb .caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 1.2em;
+  margin-left: 1px;
+  vertical-align: -0.22em;
+  background: var(--text);
+  animation: caret 1s steps(1) infinite;
+}
+
+.mb .cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 80;
+  width: 28px;
+  height: 28px;
+  fill: #111113;
+  stroke: #ffffff;
+  stroke-width: 1.3;
+  stroke-linejoin: round;
+  opacity: 0;
+  translate: var(--x, 80%) var(--y, 80%);
+  transition: translate var(--t, 0.6s) cubic-bezier(0.45, 0.05, 0.25, 1), opacity 0.3s, scale 0.1s;
+  filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.25));
+  pointer-events: none;
+}
+
+.mb .cursor.on {
+  opacity: 1;
+}
+
+.mb .cursor.down {
+  scale: 0.86;
+}
+
+/* With scripts the demo starts on the inbox and opens Compose itself. */
+:root.js .mb .compose {
+  translate: 0 105%;
+  transition: translate 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:root.js .mb .compose.open {
+  translate: 0 0;
+}
+
+.mb .fade {
+  transition: opacity 0.5s;
+  opacity: 0;
+}
+
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes chip-in {
+  from {
+    scale: 0.9;
+    opacity: 0;
+  }
+}
+
+/* Inside .mb-fit, container widths are the app's own layout widths (1440, 1100 or 390). */
+
+@container (max-width: 1100px) {
+  .mb .list-card {
+    width: clamp(300px, 40%, 380px);
+  }
+}
+
+/* Phone: the app's mobile layout, full-screen compose and a Compose button. */
+@container (max-width: 560px) {
+  .mb .rail,
+  .mb .search,
+  .mb .hide-narrow {
+    display: none;
+  }
+  .mb .topbar {
+    padding: 0 16px;
+  }
+  .mb .topbar-row {
+    min-height: 56px;
+  }
+  .mb .panes {
+    padding: 0;
+  }
+  .mb .list-card {
+    border: 0;
+    border-radius: 0;
+  }
+  .mb .row-item {
+    padding: 14px 16px;
+  }
+  .mb .compose-fab {
+    position: absolute;
+    right: 16px;
+    bottom: 18px;
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 48px;
+    padding: 0 18px;
+    border-radius: 16px;
+    background: var(--primary);
+    color: var(--primary-text);
+    font-weight: 600;
+    box-shadow: var(--shadow-lg);
+    transition: scale 0.1s;
+  }
+  .mb .compose {
+    inset: 0;
+    width: auto;
+    height: auto;
+    border: 0;
+    border-radius: 0;
+  }
+  .mb .addr-field,
+  .mb .subject-input,
+  .mb .editor-content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .mb .editor-toolbar {
+    overflow: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root.js .mb .compose {
+    translate: none;
+    transition: none;
+  }
+  .mb .caret {
+    animation: none;
+  }
+}

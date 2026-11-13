@@ -1,0 +1,36 @@
+---
+import Keyboard from "./Keyboard.astro";
+import MailDemo from "./MailDemo.astro";
+import Scene from "./Scene.astro";
+import SceneSides from "./SceneSides.astro";
+import Waitlist from "./Waitlist.astro";
+import "../styles/hero.css";
+import "../styles/scene.css";
+import "../styles/flag.css";
+import "../styles/demo.css";
+---
+
+<section class="hero">
+  <div class="hero-card">
+    <Scene />
+    <div class="hero-copy">
+      <span class="hero-pill"><span class="dot-ok"></span>Coming soon · Open source · MIT</span>
+      <h1>Free professional email<br />for <mark>your team.</mark></h1>
+      <p class="hero-lead">The open-source alternative to <span class="vs">Outlook</span> <span class="vs">Gmail</span> <span class="vs">GoDaddy</span>, self-hosted on your own server.</p>
+      <div class="hero-actions" id="join">
+        <Waitlist tone="hero" />
+      </div>
+    </div>
+    <div class="stage">
+      <SceneSides />
+      <div class="stage-grow">
+        <MailDemo />
+        <Keyboard />
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import "../scripts/grow.ts";
+</script>
